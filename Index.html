@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tela de Status - Solo Leveling</title>
+    <style>
+        body {
+            background: linear-gradient(135deg, #1a1a1a, #2c2c2c);
+            color: #fff;
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        .login-container, .register-container, .status-container {
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid #6A5ACD;
+            border-radius: 15px;
+            padding: 20px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 0 20px rgba(106, 90, 205, 0.5);
+            text-align: center;
+            box-sizing: border-box;
+        }
+
+        .login-container, .register-container {
+            display: none;
+        }
+
+        .login-container h2, .register-container h2 {
+            color: #6A5ACD;
+            margin-bottom: 20px;
+            font-size: clamp(1.5rem, 5vw, 1.8rem);
+        }
+
+        .login-container input, .register-container input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #6A5ACD;
+            border-radius: 5px;
+            background: #333;
+            color: #fff;
+            font-size: clamp(0.9rem, 4vw, 1rem);
+            box-sizing: border-box;
+        }
+
+        .login-container button, .register-container button {
+            padding: 10px 20px;
+            background: #6A5ACD;
+            border: none;
+            border-radius: 5px;
+            color: #fff;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin: 5px;
+            font-size: clamp(0.9rem, 4vw, 1rem);
+        }
+
+        .login-container button:hover, .register-container button:hover {
+            background: #483D8B;
+        }
+
+        .status-container {
+            display: none;
+        }
+
+        .profile-section {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .profile-pic {
+            width: clamp(80px, 25vw, 100px);
+            height: clamp(80px, 25vw, 100px);
+            border-radius: 50%;
+            border: 3px solid #6A5ACD;
+            object-fit: cover;
+        }
+
+        .profile-info h2 {
+            margin: 0;
+            font-size: clamp(1.2rem, 5vw, 1.5rem);
+            color: #6A5ACD;
+        }
+
+        .profile-info .rank {
+            font-size: clamp(1rem, 4vw, 1.2rem);
+            color: #6A5ACD;
+            font-weight: bold;
+        }
+
+        .profile-info p {
+            margin: 5px 0;
+            font-size: clamp(0.9rem, 4vw, 1rem);
+        }
+
+        .tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 10px;
+            background: #333;
+            border: 1px solid #6A5ACD;
+            border-radius: 5px;
+            color: #fff;
+            cursor: pointer;
+            transition: background 0.3s;
+            font-size: clamp(0.8rem, 3.5vw, 0.9rem);
+        }
+
+        .tab-btn:hover, .tab-btn.active {
+            background: #6A5ACD;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .stat {
+            display: flex;
+            justify-content: space-between;
+            margin: 8px 0;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+        }
+
+        .stat span {
+            font-size: clamp(0.9rem, 4vw, 1rem);
+        }
+
+        .level {
+            color: #6A5ACD;
+            font-weight: bold;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #333;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-top: 5px;
+        }
+
+        .progress {
+            height: 100%;
+            background: #6A5ACD;
+            transition: width 0.5s ease-in-out;
+        }
+
+        .missions {
+            margin-top: 15px;
+        }
+
+        .missions h4 {
+            margin: 10px 0;
+            color: #6A5ACD;
+            font-size: clamp(1rem, 4vw, 1.2rem);
+        }
+
+        .missions ul {
+            list-style: none;
+            padding: 0;
+            text-align: left;
+        }
+
+        .missions li {
+            margin: 5px 0;
+            font-size: clamp(0.8rem, 3.5vw, 0.9rem);
+        }
+
+        .logout-btn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: #6A5ACD;
+            border: none;
+            border-radius: 5px;
+            color: #fff;
+            cursor: pointer;
+            transition: background 0.3s;
+            font-size: clamp(0.9rem, 4vw, 1rem);
+            width: 100%;
+        }
+
+        .logout-btn:hover {
+            background: #483D8B;
+        }
+
+        .error, .success {
+            margin: 10px 0;
+            font-size: clamp(0.8rem, 3.5vw, 0.9rem);
+        }
+
+        .error {
+            color: red;
+        }
+
+        .success {
+            color: #6A5ACD;
+        }
+
+        @media (max-width: 600px) {
+            .profile-section {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+
+            .profile-pic {
+                margin-right: 0;
+                margin-bottom: 10px;
+            }
+
+            .login-container input, .register-container input {
+                width: 100%;
+            }
+
+            .login-container button, .register-container button, .logout-btn {
+                width: 100%;
+                padding: 12px;
+            }
+
+            .tabs {
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .tab-btn {
+                padding: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container" id="login-container">
+        <h2>Login</h2>
+        <input type="text" id="username" placeholder="Nome de Usuário" required>
+        <input type="password" id="password" placeholder="Senha" required>
+        <button onclick="login()">Entrar</button>
+        <button onclick="showRegister()">Cadastrar</button>
+        <p id="login-error" class="error" style="display: none;">Usuário ou senha incorretos!</p>
+    </div>
+
+    <div class="register-container" id="register-container">
+        <h2>Cadastro</h2>
+        <input type="text" id="reg-username" placeholder="Nome de Usuário" required>
+        <input type="password" id="reg-password" placeholder="Senha" required>
+        <input type="number" id="reg-age" placeholder="Idade" required>
+        <input type="text" id="reg-profile-pic" placeholder="URL da Foto (opcional)">
+        <button onclick="register()">Cadastrar</button>
+        <button onclick="showLogin()">Voltar ao Login</button>
+        <p id="register-error" class="error" style="display: none;"></p>
+        <p id="register-success" class="success" style="display: none;">Cadastro realizado com sucesso!</p>
+    </div>
+
+    <div class="status-container" id="status-container">
+        <div class="profile-section">
+            <img class="profile-pic" id="profile-pic" src="https://via.placeholder.com/100" alt="Foto de Perfil">
+            <div class="profile-info">
+                <h2 id="name">Sung Jin-Woo <span class="rank" id="player-rank">Rank B</span></h2>
+                <p>Idade: <span id="age">25</span></p>
+            </div>
+        </div>
+        <div class="tabs">
+            <button class="tab-btn active" onclick="showTab('leitura')">Leitura</button>
+            <button class="tab-btn" onclick="showTab('escrita')">Escrita</button>
+            <button class="tab-btn" onclick="showTab('escuta')">Escuta</button>
+            <button class="tab-btn" onclick="showTab('kanjis')">Kanjis</button>
+            <button class="tab-btn" onclick="showTab('vocabulario')">Vocabulário</button>
+            <button class="tab-btn" onclick="showTab('gramatica')">Gramática</button>
+        </div>
+        <div class="stats-section">
+            <div id="leitura" class="tab-content active">
+                <div class="stat">
+                    <span>Leitura</span>
+                    <span class="level" id="leitura-level">50</span>
+                </div>
+                <div class="progress-bar"><div class="progress" id="leitura-progress" style="width: 50%;"></div></div>
+                <div class="missions">
+                    <h4>Missões para Upar Leitura</h4>
+                    <ul>
+                        <li>Ler 10 páginas de um livro em japonês (Nível N5/N4) (+5 pontos)</li>
+                        <li>Completar 5 artigos no Satori Reader (+3 pontos)</li>
+                        <li>Ler 3 notícias no NHK Easy News (+4 pontos)</li>
+                    </ul>
+                </div>
+            </div>
+            <div id="escrita" class="tab-content">
+                <div class="stat">
+                    <span>Escrita</span>
+                    <span class="level" id="escrita-level">40</span>
+                </div>
+                <div class="progress-bar"><div class="progress" id="escrita-progress" style="width: 40%;"></div></div>
+                <div class="missions">
+                    <h4>Missões para Upar Escrita</h4>
+                    <ul>
+                        <li>Escrever 10 frases em japonês usando vocabulário N5 (+3 pontos)</li>
+                        <li>Completar 5 exercícios no BunPro (+4 pontos)</li>
+                        <li>Escrever um diário de 100 palavras em japonês (+5 pontos)</li>
+                    </ul>
+                </div>
+            </div>
+            <div id="escuta" class="tab-content">
+                <div class="stat">
+                    <span>Escuta</span>
+                    <span class="level" id="escuta-level">60</span>
+                </div>
+                <div class="progress-bar"><div class="progress" id="escuta-progress" style="width: 60%;"></div></div>
+                <div class="missions">
+                    <h4>Missões para Upar Escuta</h4>
+                    <ul>
+                        <li>Assistir a 1 episódio de anime sem legendas (+5 pontos)</li>
+                        <li>Completar 5 lições no JapanesePod101 (+3 pontos)</li>
+                        <li>Ouvir 3 podcasts em japonês (ex.: Nihongo Con Teppei) (+4 pontos)</li>
+                    </ul>
+                </div>
+            </div>
+            <div id="kanjis" class="tab-content">
+                <div class="stat">
+                    <span>Kanjis</span>
+                    <span class="level" id="kanjis-level">80</span>
+                </div>
+                <div class="progress-bar"><div class="progress" id="kanjis-progress" style="width: 80%;"></div></div>
+                <div class="missions">
+                    <h4>Missões para Upar Kanjis</h4>
+                    <ul>
+                        <li>Memorizar 10 kanjis novos no Wanikani (+5 pontos)</li>
+                        <li>Completar 20 flashcards de kanji no Anki (+3 pontos)</li>
+                        <li>Escrever 5 kanjis 10 vezes cada com significado (+4 pontos)</li>
+                    </ul>
+                </div>
+            </div>
+            <div id="vocabulario" class="tab-content">
+                <div class="stat">
+                    <span>Vocabulário</span>
+                    <span class="level" id="vocabulario-level">90</span>
+                </div>
+                <div class="progress-bar"><div class="progress" id="vocabulario-progress" style="width: 90%;"></div></div>
+                <div class="missions">
+                    <h4>Missões para Upar Vocabulário</h4>
+                    <ul>
+                        <li>Aprender 20 palavras novas no Memrise (+5 pontos)</li>
+                        <li>Usar 10 palavras novas em frases no HelloTalk (+4 pontos)</li>
+                        <li>Completar 5 lições de vocabulário no LingoDeer (+3 pontos)</li>
+                    </ul>
+                </div>
+            </div>
+            <div id="gramatica" class="tab-content">
+                <div class="stat">
+                    <span>Gramática</span>
+                    <span class="level" id="gramatica-level">60</span>
+                </div>
+                <div class="progress-bar"><div class="progress" id="gramatica-progress" style="width: 60%;"></div></div>
+                <div class="missions">
+                    <h4>Missões para Upar Gramática</h4>
+                    <ul>
+                        <li>Completar 10 exercícios de gramática no BunPro (+5 pontos)</li>
+                        <li>Escrever 5 frases usando uma nova estrutura gramatical (+3 pontos)</li>
+                        <li>Analisar 3 parágrafos de um texto em japonês (+4 pontos)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <button class="logout-btn" onclick="logout()">Sair</button>
+    </div>
+
+    <script>
+        // Carregar usuários do LocalStorage (ou inicializar com usuário padrão)
+        let users = JSON.parse(localStorage.getItem("users")) || {
+            "sungjinwoo": {
+                password: "123456",
+                profile: {
+                    username: "sungjinwoo",
+                    age: 25,
+                    profilePic: "https://via.placeholder.com/100",
+                    stats: {
+                        leitura: 50,
+                        escrita: 40,
+                        escuta: 60,
+                        kanjis: 80,
+                        vocabulario: 90,
+                        gramatica: 60
+                    }
+                }
+            }
+        };
+
+        // Verificar se já está logado
+        const loggedUser = localStorage.getItem("loggedUser");
+        if (loggedUser && users[loggedUser]) {
+            showStatus(users[loggedUser].profile);
+        } else {
+            showLogin();
+        }
+
+        // Mostrar tela de login
+        function showLogin() {
+            document.getElementById("login-container").style.display = "block";
+            document.getElementById("register-container").style.display = "none";
+            document.getElementById("status-container").style.display = "none";
+            document.getElementById("login-error").style.display = "none";
+        }
+
+        // Mostrar tela de cadastro
+        function showRegister() {
+            document.getElementById("login-container").style.display = "none";
+            document.getElementById("register-container").style.display = "block";
+            document.getElementById("status-container").style.display = "none";
+            document.getElementById("register-error").style.display = "none";
+            document.getElementById("register-success").style.display = "none";
+            document.getElementById("reg-username").value = "";
+            document.getElementById("reg-password").value = "";
+            document.getElementById("reg-age").value = "";
+            document.getElementById("reg-profile-pic").value = "";
+        }
+
+        // Função de login
+        function login() {
+            const username = document.getElementById("username").value.trim();
+            const password = document.getElementById("password").value;
+            const errorMessage = document.getElementById("login-error");
+
+            if (users[username] && users[username].password === password) {
+                localStorage.setItem("loggedUser", username);
+                document.getElementById("login-container").style.display = "none";
+                showStatus(users[username].profile);
+            } else {
+                errorMessage.style.display = "block";
+            }
+        }
+
+        // Função de cadastro
+        function register() {
+            const username = document.getElementById("reg-username").value.trim();
+            const password = document.getElementById("reg-password").value;
+            const age = parseInt(document.getElementById("reg-age").value);
+            const profilePic = document.getElementById("reg-profile-pic").value.trim() || "https://via.placeholder.com/100";
+            const errorMessage = document.getElementById("register-error");
+            const successMessage = document.getElementById("register-success");
+
+            // Validações
+            if (!username || !password || !age) {
+                errorMessage.textContent = "Preencha todos os campos obrigatórios!";
+                errorMessage.style.display = "block";
+                return;
+            }
+            if (users[username]) {
+                errorMessage.textContent = "Nome de usuário já existe!";
+                errorMessage.style.display = "block";
+                return;
+            }
+            if (age < 1 || age > 120) {
+                errorMessage.textContent = "Idade inválida!";
+                errorMessage.style.display = "block";
+                return;
+            }
+
+            // Criar novo usuário
+            users[username] = {
+                password: password,
+                profile: {
+                    username: username,
+                    age: age,
+                    profilePic: profilePic,
+                    stats: {
+                        leitura: 1,
+                        escrita: 1,
+                        escuta: 1,
+                        kanjis: 1,
+                        vocabulario: 1,
+                        gramatica: 1
+                    }
+                }
+            };
+
+            // Salvar no LocalStorage
+            localStorage.setItem("users", JSON.stringify(users));
+            successMessage.style.display = "block";
+            errorMessage.style.display = "none";
+
+            // Voltar ao login após 2 segundos
+            setTimeout(showLogin, 2000);
+        }
+
+        // Função de logout
+        function logout() {
+            localStorage.removeItem("loggedUser");
+            showLogin();
+            document.getElementById("username").value = "";
+            document.getElementById("password").value = "";
+        }
+
+        // Mapeamento de nível para rank do jogador
+        function getPlayerRank(stats) {
+            const maxLevel = Math.max(...Object.values(stats));
+            if (maxLevel >= 90) return "S";
+            if (maxLevel >= 70) return "A";
+            if (maxLevel >= 50) return "B";
+            if (maxLevel >= 30) return "C";
+            return "E";
+        }
+
+        // Exibir status do jogador
+        function showStatus(profile) {
+            document.getElementById("status-container").style.display = "block";
+            document.getElementById("login-container").style.display = "none";
+            document.getElementById("register-container").style.display = "none";
+            document.getElementById("name").innerHTML = `${profile.username} <span class="rank" id="player-rank">Rank ${getPlayerRank(profile.stats)}</span>`;
+            document.getElementById("age").textContent = profile.age;
+            document.getElementById("profile-pic").src = profile.profilePic;
+
+            const stats = profile.stats;
+            for (let stat in stats) {
+                const level = stats[stat];
+                document.getElementById(`${stat}-level`).textContent = level;
+                document.getElementById(`${stat}-progress`).style.width = `${level}%`;
+            }
+
+            // Mostrar aba inicial
+            showTab('leitura');
+        }
+
+        // Alternar entre abas
+        function showTab(tabId) {
+            const tabs = document.querySelectorAll('.tab-content');
+            const buttons = document.querySelectorAll('.tab-btn');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            buttons.forEach(btn => btn.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            document.querySelector(`.tab-btn[onclick="showTab('${tabId}')"]`).classList.add('active');
+        }
+    </script>
+</body>
+</html>
